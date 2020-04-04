@@ -230,6 +230,19 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/application-manage',
+    component: Layout,
+    redirect: '/application-manage/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/application-manage/index'),
+        name: 'applicationManage',
+        meta: { title: '学生志愿管理', roles: ['school'], icon: 'people', noCache: true }
+      }
+    ]
+  },
+  {
     path: '/students',
     component: Layout,
     redirect: '/students/index',
@@ -238,7 +251,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/students/index'),
         name: 'Students',
-        meta: { title: '学生列表', roles: ['school'], icon: 'peoples', noCache: true }
+        meta: { title: '所有学生列表', roles: ['school'], icon: 'peoples', noCache: true }
       }
     ]
   },
@@ -251,7 +264,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/tutors/index'),
         name: 'Tutors',
-        meta: { title: '导师列表', roles: ['school'], icon: 'peoples', noCache: true }
+        meta: { title: '所有导师列表', roles: ['school'], icon: 'peoples', noCache: true }
       }
     ]
   },
@@ -264,7 +277,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/manage/index'),
         name: 'Manage',
-        meta: { title: '人员管理', roles: ['school'], icon: 'guide', noCache: true }
+        meta: { title: '所有人员管理', roles: ['school'], icon: 'guide', noCache: true }
       }
     ]
   },

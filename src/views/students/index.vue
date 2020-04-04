@@ -6,30 +6,35 @@
         :data="tableData"
         stripe
         border
-        style="width: 1082px">
+        style="width: 1262px">
         <el-table-column
           prop="sid"
           label="学生ID"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="sname"
+          prop="student_name"
           label="学生姓名"
           width="180">
         </el-table-column>
         <el-table-column
           prop="tid"
-          label="选择导师的ID"
+          label="所选导师ID"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="tname"
+          prop="teacher_name"
           label="导师姓名"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="status"
-          label="状态"
+          prop="voluntary_time"
+          label="申请时间"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="state"
+          label="申请状态"
           width="180">
         </el-table-column>
         <el-table-column
@@ -37,7 +42,8 @@
           label="操作"
           width="180">
           <template slot-scope="scope">
-            <el-button @click="seeDetail(scope.row)" type="text">详情</el-button>
+            <el-button @click="seeDetail(scope.row)" type="text">学生简历</el-button>
+            <el-button @click="seeDetail(scope.row)" type="text">联系学生</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -46,50 +52,30 @@
 </template>
 
 <script>
+import { allStudentList } from '@/api/voluntary'
+import { formatDate } from '@/utils/format-date'
+
 export default {
   name: 'students',
   data() {
     return {
-      tableData: [{
-          sid: '10010',
-          sname: '小马',
-          tid:'001',
-          tname:'老郭',
-          status:'导师审核中'
-        }, {
-          sid: '10010',
-          sname: '小马',
-          tid:'001',
-          tname:'老郭',
-          status:'学院审核中'
-        }, {
-          sid: '10010',
-          sname: '小马',
-          tid:'001',
-          tname:'老郭',
-          status:'导师审核中'
-        }, {
-          sid: '10010',
-          sname: '小马',
-          tid:'001',
-          tname:'老郭',
-          status:'导师审核中'
-        },{
-          sid: '10010',
-          sname: '小马',
-          tid:'001',
-          tname:'老郭',
-          status:'导师审核中'
-        }]
+      tableData: []
     }
   },
-  mounted() {
-    
+  created() {
+    allStudentList().then(response=>{
+      if(response.code === 200) {
+        response.data.forEach(element => {
+          element.voluntary_time = this.formatDate(element.voluntary_time)
+        });
+        this.tableData = response.data
+      }
+    })
   },
   methods: {
+    formatDate,
     seeDetail(row) {
-      console.log(row);
-      this.$router.push('/profile/index')
+      this.$router.push({path:'/profile',query:{uid:row.student_uid}})
     }
   }
 }

@@ -6,33 +6,34 @@
         :data="tableData"
         stripe
         border
-        style="width: 1202px">
+        style="width: 902px">
         <el-table-column
           prop="tid"
           label="导师ID"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="tname"
+          prop="name"
           label="导师姓名"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="situation"
-          label="招收情况"
+          prop="rated"
+          label="预招收"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="email"
-          label="联系导师"
-          width="220">
+          prop="confirm"
+          label="已确定"
+          width="180">
         </el-table-column>
         <el-table-column 
           prop="modify"
           label="操作" 
           width="180">
             <template slot-scope="scope">
-               <el-button @click="seeDetail(scope.row)" type="text">详情</el-button>
+               <el-button @click="seeDetail(scope.row)" type="text">导师详情</el-button>
+               <el-button @click="seeDetail(scope.row)" type="text">联系导师</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -41,50 +42,22 @@
 </template>
 
 <script>
+
 export default {
   name: 'tutors',
   data() {
     return {
-      tableData: [
-        {
-          tid:'001',
-          tname:'老郭',
-          situation:'2/5',
-          email:'17691191896@163.com'
-        }, 
-        {
-          tid:'002',
-          tname:'老李',
-          situation:'3/7',
-          email:'17691191896@163.com'
-        }, 
-        {
-          tid:'111',
-          tname:'老王',
-          situation:'3/7',
-          email:'3052676556@qq.com'
-        }, 
-        {
-          tid:'312',
-          tname:'老张',
-          situation:'2/5',
-          email:'3052676556@qq.com'
-        },
-        {
-          tid:'421',
-          tname:'老四',
-          situation:'3/7',
-          email:'3052676556@qq.com'
-        }],
+      tableData: [],
     }
   },
-  mounted() {
-    
+  created() {
+    this.$store.dispatch('teacher/getTeacherList').then(response => {
+      this.tableData = this.$store.getters.teacherList
+    })
   },
   methods: {
     seeDetail(row) {
-      console.log(row);
-      this.$router.push('/tdetail')
+      this.$router.push({path:'/tdetail',query:{uid:row.uid,tid:row.tid}})
     }
   }
 }

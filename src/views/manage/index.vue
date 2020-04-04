@@ -1,6 +1,6 @@
 <template>
   <div class="tutor-container">
-    <div class="see-title"> > 人员管理/Users Manage</div>
+    <div class="see-title"> > 所有人员管理/Users Manage</div>
     <el-button type="primary" class="new-add" @click="dialogVisible = true">新增账号</el-button>
     <div class="table">
       <el-table
