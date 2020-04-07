@@ -13,7 +13,7 @@
               width="200">
             </el-table-column>
             <el-table-column
-              prop="update-date"
+              prop="date"
               label="更新时间"
               width="200">
             </el-table-column>
@@ -75,6 +75,8 @@
 
 <script>
 import { validUpperCase } from '../../utils/validate';
+import { getStudentSimple } from '@/api/student'
+import { formatDate } from '@/utils/format-date'
 import { getUid } from '@/utils/auth'
 export default {
   name: 'Guide',
@@ -83,8 +85,7 @@ export default {
       uid:getUid(),
       resumeData: [{
         "resume-type": '学生简历',
-        "create-date": '2019-03-29',
-        "newest-date": '2019-04-16'
+        "date": ''
       }],
       aspirationData: []
     }
@@ -93,11 +94,15 @@ export default {
     this.$store.dispatch('voluntary/getVoluntaryList',{uid:this.uid}).then(response => {
       this.aspirationData = this.$store.getters.myVoluntary
     })
+    getStudentSimple({uid:this.uid}).then(response => {
+      if(response.data) {
+        this.resumeData[0].date = this.formatDate(response.data.date)
+      }
+    })
   },
-  mounted() {
-    
-  },
-  methods: {    
+  methods: {
+    formatDate,
+    getStudentSimple,
     toPreview() {
       this.$router.push('/profile')
     },

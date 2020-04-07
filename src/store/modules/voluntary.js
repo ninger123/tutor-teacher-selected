@@ -1,5 +1,5 @@
 import {　getVoluntaryList } from '@/api/voluntary'
-import { promised, resolve, reject } from 'q';
+import { formatDate } from '@/utils/format-date'
 
 const state = {
     myVoluntary:[]
@@ -16,6 +16,10 @@ const actions = {
     getVoluntaryList({commit},uid) {
         return new Promise((resolve,reject) => {
             getVoluntaryList(uid).then(response => {
+                response.data.forEach(element => {
+                    element.voluntary_time = formatDate(element.voluntary_time)
+                    element.level = '第' + element.level +'志愿'
+                });
                 commit('SET_MYVOLUNTARY',response.data)
                 resolve(response)
             }).catch(error => {
