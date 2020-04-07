@@ -1,6 +1,6 @@
 <template>
   <div class="tdetail-container">
-    <div class="see-title"> > 查看导师详情/Tutor Detail</div>
+    <div class="see-title"> > 查看导师简历/Tutor Resume</div>
     <div class="tutor-info">
         <div class="tutor-top">
             <div class="tutor-name">{{this.tname}}</div> 

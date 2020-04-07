@@ -21,6 +21,9 @@ import * as filters from './filters' // global filters
 
 import htmlToPdf from './utils/html-to-pdf' // 导出PDF
 
+import vuescroll from 'vuescroll';
+
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -39,9 +42,14 @@ import htmlToPdf from './utils/html-to-pdf' // 导出PDF
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
-  htmlToPdf  // 导出pdf
+  htmlToPdf,  // 导出pdf
 })
 
+Vue.use(vuescroll, {
+  ops: {}, // 在这里设置全局默认配置
+  name: 'myScroll' // 在这里自定义组件名字，默认是vueScroll
+});
+  
 // register global utility filters
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])

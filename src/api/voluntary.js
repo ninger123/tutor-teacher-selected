@@ -84,3 +84,11 @@ export function allStudentList() {
         method:'post'
     })
 }
+
+// 获取我的流程状态接口
+export function getMyFlow() {
+    return request({
+        url:'voluntary/my_voluntary',
+        method:'post'
+    })
+}

@@ -5,10 +5,9 @@
 </template>
 
 <script>
-// import GithubCorner from '@/components/GithubCorner'
 
 export default {
-  name: 'DashboardAdmin',
+  name: 'schoolIndex',
   components: {
   },
   data() {

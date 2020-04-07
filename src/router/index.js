@@ -57,12 +57,12 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/home',
     children: [
       {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
+        path: 'home',
+        component: () => import('@/views/home/index'),
+        name: 'Home',
         meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
@@ -91,7 +91,20 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/profile/index'),
         name: 'Profile',
-        meta: { title: '学生简历',roles: ['student','school'], icon: 'user', noCache: true }
+        meta: { title: '学生简历',icon: 'user', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/chat',
+    component: Layout,
+    redirect: '/chat/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/chat/index'),
+        name: 'Chat',
+        meta: { title: '聊天室',icon: 'peoples', noCache: true }
       }
     ]
   },

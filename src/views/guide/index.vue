@@ -13,13 +13,8 @@
               width="200">
             </el-table-column>
             <el-table-column
-              prop="create-date"
-              label="创建时间"
-              width="200">
-            </el-table-column>
-            <el-table-column
-              prop="newest-date"
-              label="最后更新时间"
+              prop="update-date"
+              label="更新时间"
               width="200">
             </el-table-column>
             <el-table-column

@@ -36,6 +36,15 @@ export function addTeacherProject(data) {
     })
 }
 
+// 获取导师的简单简历信息
+export function getTeacherSimple(data) {
+    return request({
+        url:'/teacher/resume',
+        method:'post',
+        data
+    })
+}
+
 // 更新教师的基本信息
 export function updateTeacherBasic(data) {
     return request({

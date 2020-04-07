@@ -36,6 +36,15 @@ export function getStudentProject(uid) {
   })
 }
 
+// 获取学生简单简历信息
+export function getStudentSimple(data) {
+  return request({
+    url:'student/resume',
+    method:'post',
+    data
+  })
+}
+
 // 新增学生的基本信息
 export function addStudentBasic(data) {
   return request({
