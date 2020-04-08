@@ -32,9 +32,9 @@
       <div class="chat-body-container" v-if="clicked">
         <div class="chat-room">
           <div class="chat-room-header">{{this.currname}}</div>
-          <div class="chat-romm-body">
-            <vuescroll :ops="ops">
-              <div>
+          <div class="chat-romm-body" id="chat-room-body" style="overflow:auto;">
+            <vuescroll :ops="ops" ref="vs">
+              <div id="ul-container" >
                 <ul ref="msglist" class="vchat-message">
                   <li v-for="(v, i) in currSation" :key="i">
                     <div :class="[{other: v.type==='other'},{mine: v.type ==='mine'}]" class="messageliinfo mes-box">
@@ -49,7 +49,7 @@
                             <p class="mes">{{v.message}}</p>
                       </div>
                       <p class="avatar mines" v-if="v.type === 'mine'">
-                        <img :src="currAvater" alt="">
+                        <img :src="avatar" alt="">
                       </p>
                     </div>
                   </li>
@@ -63,7 +63,7 @@
             ref="inputarea"
             type="textarea"
             :rows="9"
-            @keyup.enter="sendMessage"
+            @keyup.enter.native = "sendMessage"
             v-model="message">
           </el-input>
           <div class="enter">
@@ -96,7 +96,8 @@ export default {
     return {
       ops: {
           vuescroll: {},
-          scrollPanel: {},
+          scrollPanel: {
+          },
           rail: {},
           bar: {}
       },
@@ -110,8 +111,14 @@ export default {
       currAvater:'',
       oppsiteId:'',
       type:'',
-      websock:null
+      websock:null,
     }
+  },
+   computed: {
+    ...mapGetters([
+      'myname',
+      'avatar'
+    ])
   },
   components: {
     chatItem, 
@@ -132,7 +139,7 @@ export default {
         } else {
           element.date = this.formatDay(element.date)
         }
-      });
+      }); 
       this.contactsList = response.data
     })
   },
@@ -140,6 +147,9 @@ export default {
     formatTime,
     formatDay,
     getInRoom(v) {
+      if(this.websock) {
+        this.websocketclose()
+      }
       this.clicked = true
       this.currRoom = v.conversationId;
       this.currname = v.userName
@@ -151,6 +161,7 @@ export default {
       })
       this.$nextTick(() => {
          this.$refs.inputarea.focus()
+
          // 获取历史消息记录
           getHistoryConversation({conversationId:v.conversationId}).then(response => {
             if(response.data) {
@@ -163,10 +174,17 @@ export default {
               })
               this.currSation = response.data;
             }
+          }).then(() => {
+            this.$refs["vs"].scrollTo(
+              {
+                  y: "100%"
+              },
+              0
+            );
           })
 
-          // init Webcocket
-          this.initWebSocket()
+        // init Webcocket
+        this.initWebSocket()
       })
     },
     initWebSocket(){ //初始化weosocket
@@ -185,8 +203,30 @@ export default {
 
     //收到服务器返回回来的消息
     websocketonmessage(e){
-      const redata = JSON.parse(e.data);
-      this.msglist.push(redata);
+      const data = JSON.parse(e.data)
+      data.type = 'other'
+      if(data.fromName === this.currname) {
+        this.currSation.push(data);
+      }
+
+      this.contactsList.forEach(item=> {
+        console.log('item.conversationId'+ item.conversationId)
+        console.log('this.currRoom'+this.currRoom)
+        if( item.conversationId=== this.currRoom ) {
+          if (e.fromName === this.currname) {
+            item.message = data.message
+            item.date = this.formatTime(new Date().getTime())
+          }
+        }
+      })
+      this.$nextTick(() => {
+        this.$refs["vs"].scrollTo(
+              {
+                  y: "100%"
+              },
+              0
+            );
+      })
     },
 
     //如果连接建立失败则重连
@@ -199,9 +239,28 @@ export default {
         console.log('断开连接',e);
     },
     sendMessage() {
+      if(this.message.trim() === '') {
+        return
+      }
       let par ={fromId:this.uid,toId:this.oppsiteId,message:this.message}
       this.websock.send(JSON.stringify(par))
-      this.message = ''
+      let newMessage = {type :'mine',fromName:this.myname,date:new Date().getTime(),message:this.message}
+      this.currSation.push(newMessage)
+      this.contactsList.forEach(item=> {
+        if( item.conversationId=== this.currRoom ) {
+          item.message = this.message
+          item.date = this.formatTime(new Date().getTime())
+        }
+      })
+      this.$nextTick(() => {
+        this.$refs["vs"].scrollTo(
+              {
+                  y: "100%"
+              },
+              0
+        );
+        this.clear()
+      })
     },
      // 清空input框里输入的文字
     clear() {

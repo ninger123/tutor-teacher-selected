@@ -6,6 +6,7 @@ const state = {
   token: getToken(),
   avatar: '',
   roles: [],
+  myname:'',
   uid: undefined
 }
 
@@ -18,6 +19,9 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_MYNAME: (state, myname) => {
+    state.myname = myname
   },
   SET_UID: (state, uid) => {
     state.uid = uid
@@ -60,17 +64,19 @@ const actions = {
           roles = ['school']
         }
 
-        const avatar = 'https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2471723103,4261647594&fm=26&gp=0.jpg'
+        const avatar = data.image
 
         const uid = data.uid
         // 把uid存储到cookie
         setUid(uid)
 
+        let myname = data.name
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
         commit('SET_ROLES', roles)
         commit('SET_UID', uid)
+        commit('SET_MYNAME',myname)
         commit('SET_AVATAR', avatar)
         resolve(data)
       }).catch(error => {

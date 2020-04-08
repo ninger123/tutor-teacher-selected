@@ -8,6 +8,7 @@ const getters = {
   avatar: state => state.user.avatar,
   uid: state => state.user.uid,
   roles: state => state.user.roles,
+  myname: state => state.user.myname,
   permission_routes: state => state.permission.routes,
   errorLogs: state => state.errorLog.logs,
   // 学生基本信息
