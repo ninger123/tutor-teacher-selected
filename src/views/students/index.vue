@@ -1,12 +1,13 @@
 <template>
   <div class="tutor-container">
     <div class="see-title"> > 所有学生列表/Students List</div>
+    <div class="info">*未填写基本信息的学生不在此列表展示</div>
     <div class="table">
       <el-table
         :data="tableData"
         stripe
         border
-        style="width: 1262px">
+        style="width: 1282px">
         <el-table-column
           prop="sid"
           label="学生ID"
@@ -35,7 +36,7 @@
         <el-table-column
           prop="state"
           label="申请状态"
-          width="180">
+          width="200">
         </el-table-column>
         <el-table-column
           prop="modify"
@@ -43,7 +44,6 @@
           width="180">
           <template slot-scope="scope">
             <el-button @click="seeDetail(scope.row)" type="text">学生简历</el-button>
-            <el-button @click="seeDetail(scope.row)" type="text">联系学生</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -91,6 +91,13 @@ export default {
     font-size: 22px;
     color:rgb(48,65,86);
     font-weight: bold;
+  }
+
+  .info {
+    font-size: 16px;
+    color:rgb(245, 92, 92);
+    margin-top: 20px;
+    margin-left: 20px;
   }
 
   .table{

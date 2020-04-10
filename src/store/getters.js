@@ -41,6 +41,7 @@ const getters = {
   title: state => state.teacher.title,
   temail: state => state.teacher.email,
   research_direction: state => state.teacher.research_direction,
+  max_number:state => state.teacher.max_number,
   image: state => state.teacher.image,
   research_findings: state => state.teacher.research_findings,
   // 老师项目经历

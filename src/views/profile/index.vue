@@ -1,7 +1,7 @@
 <template>
   <div class="preview-container">
     <div class="see-title"> > 学生简历/Student's Resume</div>
-    <div id="pdfDom" class="pdf-container">
+    <div id="pdfDom" class="pdf-container" v-if="haveEdit">
       <div class="left-container">
         <div class="left-content">
           <img class="image" :src="image">
@@ -88,7 +88,7 @@
         </div>
       </div>
     </div>
-    <el-button type="primary" class="btn btn-primary" v-on:click="buttonClick()">导出PDF</el-button>
+    <el-button v-if="haveEdit" type="primary" class="btn btn-primary" v-on:click="buttonClick()">导出PDF</el-button>
   </div>
 </template>
 
@@ -105,7 +105,8 @@ export default {
       uid:this.$route.query.uid || getUid(),
       htmlValue:4,
       cssValue: 3.5,
-      image:''
+      image:'',
+      haveEdit:''
     }
   },
   computed: {
@@ -135,7 +136,16 @@ export default {
   },
   created() {
     this.$store.dispatch('student/getStudentBasic',{uid:this.uid}).then(response => {
-      this.image = response.data.image
+      if(response.data) {
+        this.haveEdit = true
+        this.image = response.data.image
+      }else {
+        this.haveEdit = false
+        this.$message({
+          message: '请先去填写个人信息哦～',
+          type: 'error'
+        })
+      }
     })
     this.$store.dispatch('student/getStudentScore',{uid:this.uid})
     this.$store.dispatch('student/getStudentEducation',{uid:this.uid})

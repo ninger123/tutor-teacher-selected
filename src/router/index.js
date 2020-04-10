@@ -96,19 +96,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/chat',
-    component: Layout,
-    redirect: '/chat/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/chat/index'),
-        name: 'Chat',
-        meta: { title: '聊天室',icon: 'peoples', noCache: true }
-      }
-    ]
-  },
-  {
     path: '/404',
     component: () => import('@/views/error-page/404'),
     hidden: true
@@ -126,43 +113,14 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
-    path: '/permission',
+    path: '/icon',
     component: Layout,
-    redirect: '/permission/page',
-    alwaysShow: true, // 一直显示跟路由
-    name: 'Permission',
-    meta: {
-      title: 'Permission',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
-    },
     children: [
       {
-        path: 'page',
-        component: () => import('@/views/permission/page'),
-        name: 'PagePermission',
-        meta: {
-          title: 'Page Permission',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'directive',
-        component: () => import('@/views/permission/directive'),
-        name: 'DirectivePermission',
-        meta: {
-          title: 'Directive Permission'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'role',
-        component: () => import('@/views/permission/role'),
-        name: 'RolePermission',
-        meta: {
-          title: 'Role Permission',
-          roles: ['admin']
-        }
+        path: 'index',
+        component: () => import('@/views/icons/index'),
+        name: 'Icons',
+        meta: { title: '个人简历填写',roles: ['student'], icon: 'icon', noCache: true }
       }
     ]
   },
@@ -187,19 +145,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/guide/index'),
         name: 'Guide',
-        meta: { title: '我的简历及志愿', roles: ['student'], icon: 'guide', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/icon',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/icons/index'),
-        name: 'Icons',
-        meta: { title: '个人简历填写',roles: ['student'], icon: 'icon', noCache: true }
+        meta: { title: '我的简历志愿', roles: ['student'], icon: 'guide', noCache: true }
       }
     ]
   },
@@ -239,6 +185,19 @@ export const asyncRoutes = [
         component: () => import('@/views/tedit/index'),
         name: 'Tedit',
         meta: { title: '个人简历填写', roles: ['tutor'], icon: 'edit', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/chat',
+    component: Layout,
+    redirect: '/chat/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/chat/index'),
+        name: 'Chat',
+        meta: { title: '聊天室',roles: ['tutor','student'],icon: 'peoples', noCache: true }
       }
     ]
   },

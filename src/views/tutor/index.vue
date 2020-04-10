@@ -38,6 +38,7 @@
           width="180">
           <template slot-scope="scope">
             <el-button @click="seeDetail(scope.row)" type="text">查看详情</el-button>
+            <el-button @click="contactTutor(scope.row)" type="text">联系导师</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -55,7 +56,9 @@ export default {
   },
   created() {
     this.$store.dispatch('teacher/getTeacherList').then(response => {
-      this.tableData = this.$store.getters.teacherList
+      if(response.data) {
+        this.tableData = this.$store.getters.teacherList
+      }
     })
   },
   methods: {
@@ -63,8 +66,18 @@ export default {
       const tid = row.tid
       const uid = row.uid
       this.$router.push({ path: '/tdetail', query: { tid: tid, uid: uid}})
+    },
+    contactTutor(row) {
+      if(this.$store.getters.myname) {
+        this.$router.push({ name:'Chat', params: {uid:row.uid,name:row.name,url:row.image}})
+      } else {
+        this.$message({
+          message: '请先去填写个人信息哦～',
+          type: 'error'
+        })
+      }
     } 
-  }
+  } 
 }
 </script>
 

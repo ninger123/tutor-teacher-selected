@@ -66,7 +66,6 @@ export default {
   created() {
     getUnhandledList().then(response => {
       this.tableData = response.data
-      console.log(response)
     })
   },
   methods: {

@@ -54,6 +54,7 @@ const actions = {
         if (!data) {
           reject('Verification failed, please Login again.')
         }
+        let avatar = data.image
         const roleType = data.userRole
         let roles
         if(roleType === 1 ) {
@@ -62,9 +63,8 @@ const actions = {
           roles = ['tutor']
         } else if(roleType === 3) {
           roles = ['school']
+          avatar = 'https://dss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3305298991,2024211813&fm=26&gp=0.jpg'
         }
-
-        const avatar = data.image
 
         const uid = data.uid
         // 把uid存储到cookie

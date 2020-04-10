@@ -117,13 +117,12 @@ export default {
   },
   methods: {
     seeDetail(row) {
-      console.log(row);
       if(row.userRole === "学生") {
         this.$router.push({path: '/profile', query: {uid: row.uid}})
       } else if(row.userRole === "教师"){
         this.$router.push({ path: '/tdetail', query: { uid: row.uid}})
       } else {
-        this.$router.push('/dashboard')
+        this.$router.push('/home')
       }
     },
     handleClose(done) {
@@ -185,8 +184,8 @@ export default {
   }
 
   .new-add{
-      margin-top: 30px;
-      margin-left:50px;
+      margin-top: 10px;
+      margin-left:670px;
 
   }
 

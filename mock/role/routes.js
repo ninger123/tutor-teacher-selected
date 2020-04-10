@@ -213,12 +213,6 @@ export const asyncRoutes = [
         component: 'views/components-demo/dnd-list',
         name: 'DndListDemo',
         meta: { title: 'Dnd List' }
-      },
-      {
-        path: 'drag-kanban',
-        component: 'views/components-demo/drag-kanban',
-        name: 'DragKanbanDemo',
-        meta: { title: 'Drag Kanban' }
       }
     ]
   },

@@ -2,11 +2,11 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
+        <img v-if="logo" src="@/assets/logo/xiyoulogo.jpeg" class="sidebar-logo">
         <h1 v-else class="sidebar-title">{{ title }} </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
+        <img v-if="logo" src="@/assets/logo/xiyoulogo.jpeg" class="sidebar-logo" />
         <h1 class="sidebar-title">{{ title }} </h1>
       </router-link>
     </transition>
@@ -24,8 +24,8 @@ export default {
   },
   data() {
     return {
-      title: '西邮双向选择系统',
-      logo:'https://dss1.bdstatic.com/6OF1bjeh1BF3odCf/it/u=2752166883,2544253624&fm=74&app=80&f=JPG&size=f121,121?sec=1880279984&t=67ab817504c433d45a11e43d9c858150'
+      title: '西邮师生双选系统',
+      logo:'../../../assets/logo/xiyoulogo.jpeg'
     }
   }
 }

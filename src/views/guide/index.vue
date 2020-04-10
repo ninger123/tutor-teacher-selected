@@ -87,7 +87,8 @@ export default {
         "resume-type": '学生简历',
         "date": ''
       }],
-      aspirationData: []
+      aspirationData: [],
+      havaEdit:''
     }
   },
   created() {
@@ -96,7 +97,14 @@ export default {
     })
     getStudentSimple({uid:this.uid}).then(response => {
       if(response.data) {
+        this.havaEdit = true
         this.resumeData[0].date = this.formatDate(response.data.date)
+      } else {
+        this.havaEdit=false
+        this.$message({
+          message: '请先去填写个人信息哦～',
+          type: 'error'
+        })
       }
     })
   },
@@ -104,7 +112,14 @@ export default {
     formatDate,
     getStudentSimple,
     toPreview() {
-      this.$router.push('/profile')
+      if(this.havaEdit) {
+        this.$router.push('/profile')
+      } else {
+        this.$message({
+          message: '请先去填写个人信息哦～',
+          type: 'error'
+        })
+      }
     },
     toEdit() {
       this.$router.push('/icon/index')

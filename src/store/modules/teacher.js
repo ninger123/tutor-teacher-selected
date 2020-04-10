@@ -11,6 +11,7 @@ const state = {
     email:'',
     research_direction:'',
     image: '',
+    max_number:'',
     research_findings:'', // 研究成果
     school:'',
     position:'', // 职位
@@ -32,6 +33,9 @@ const mutations = {
     },
     SET_DIRECTION:(state,research_direction) => {
         state.research_direction = research_direction
+    },
+    SET_MAXNUMBER: (state,max_number) => {
+        state.max_number = max_number
     },
     SET_IMAGE:(state,image) => {
         state.image = image
@@ -65,11 +69,12 @@ const actions = {
         return new Promise((resolve,reject) => {
             getTeacherBasic(uid).then(response => {
                 if(response.data) {
-                    const { name,title,e_mail,research_direction,image,research_findings } = response.data
+                    const { name,title,e_mail,research_direction,max_number,image,research_findings } = response.data
                     commit('SET_NAME', name)
                     commit('SET_TITLE', title)
                     commit('SET_EMAIL',e_mail)
                     commit('SET_DIRECTION', research_direction)
+                    commit('SET_MAXNUMBER',max_number)
                     commit('SET_IMAGE', image)
                     commit('SET_FINDINGS',research_findings)
                 }
@@ -85,7 +90,7 @@ const actions = {
         return new Promise((resolve,reject) => {
             getTeacherProject(uid).then(response => {
                 if(response.data) {
-                    const { name,position,time_start,time_end,describes } = response.data[2]
+                    const { name,position,time_start,time_end,describes } = response.data[0]
                     commit('SET_SCHOOL', name)
                     commit('SET_POSITION', position)
                     commit('SET_TIMESTART',time_start)
@@ -101,16 +106,17 @@ const actions = {
 
     // 添加教师的基本信息
     addTeacherBasic({commit},formlist) {
-        const {name,title,e_mail,research_direction,image,research_findings} = formlist
+        const {name,title,e_mail,research_direction,max_number,image,research_findings} = formlist
         return new Promise((resolve,reject) => {
             addTeacherBasic(formlist).then(response => {
                 commit('SET_NAME', name)
                 commit('SET_TITLE', title)
                 commit('SET_EMAIL',e_mail)
+                commit('SET_MAXNUMBER',max_number)
                 commit('SET_DIRECTION', research_direction)
                 commit('SET_IMAGE', image)
                 commit('SET_FINDINGS',research_findings)
-                resolve()
+                resolve(response)
             }).catch(error => {
                 reject(error)
             })
@@ -127,7 +133,7 @@ const actions = {
                 commit('SET_TIMESTART',time_start)
                 commit('SET_TIMEEND', time_end)
                 commit('SET_DESC', describes)
-                resolve()
+                resolve(response)
             }).catch(error => {
                 reject(error)
             })
@@ -136,16 +142,17 @@ const actions = {
 
     // 更新修改教师的基本信息
     updateTeacherBasic({commit},formlist) {
-        const {name,title,e_mail,research_direction,image,research_findings} = formlist
+        const {name,title,e_mail,research_direction,max_number,image,research_findings} = formlist
         return new Promise((resolve,reject) => {
             updateTeacherBasic(formlist).then(response => {
                 commit('SET_NAME', name)
                 commit('SET_TITLE', title)
                 commit('SET_EMAIL',e_mail)
                 commit('SET_DIRECTION', research_direction)
+                commit('SET_MAXNUMBER',max_number)
                 commit('SET_IMAGE', image)
                 commit('SET_FINDINGS',research_findings)
-                resolve()
+                resolve(response)
             }).catch(error => {
                 reject(error)
             })
@@ -162,7 +169,7 @@ const actions = {
                 commit('SET_TIMESTART',time_start)
                 commit('SET_TIMEEND', time_end)
                 commit('SET_DESC', describes)
-                resolve()
+                resolve(response)
             }).catch(error => {
                 reject(error)
             })
@@ -173,7 +180,9 @@ const actions = {
     getTeacherList({commit}) {
         return new Promise((resolve,reject) => {
             getTeacherList().then(response => {
-                commit('SET_TEACHERLIST',response.data)
+                if(response.data) {
+                    commit('SET_TEACHERLIST',response.data)
+                }
                 resolve(response)
             }).catch(error => {
                 reject(error)

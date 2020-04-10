@@ -116,7 +116,14 @@ export default {
     getStudentSimple,
     formatDate,
     toPreview() {
-      this.$router.push('/profile')
+      if(this.$store.getters.myname) {
+        this.$router.push('/profile')
+      } else {
+        this.$message({
+          message: '请先去填写个人信息哦～',
+          type: 'error'
+        })
+      }
     },
     toEdit() {
       this.$router.push('/icon/index')
@@ -127,8 +134,10 @@ export default {
 
 <style lang="scss" scoped>
   .home-student-container {
+    padding: 32px;
     min-height: 100vh;
-    padding: 20px;
+    background-color: rgb(240, 242, 245);
+    position: relative;
 
     .student-title {
     color:rgb(48,65,86);

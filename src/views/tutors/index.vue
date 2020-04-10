@@ -1,6 +1,7 @@
 <template>
   <div class="tutor-container">
     <div class="see-title"> > 所有导师列表/Tutors List</div>
+    <div class="info">*未填写基本信息的导师不在此列表展示</div>
     <div class="table">
       <el-table
         :data="tableData"
@@ -33,7 +34,6 @@
           width="180">
             <template slot-scope="scope">
                <el-button @click="seeDetail(scope.row)" type="text">导师详情</el-button>
-               <el-button @click="seeDetail(scope.row)" type="text">联系导师</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -52,7 +52,9 @@ export default {
   },
   created() {
     this.$store.dispatch('teacher/getTeacherList').then(response => {
-      this.tableData = this.$store.getters.teacherList
+      if(response.data) {
+        this.tableData = this.$store.getters.teacherList
+      }
     })
   },
   methods: {
@@ -67,7 +69,14 @@ export default {
 
 .tutor-container{
   padding: 20px;
-  min-height: 100vh;              
+  min-height: 100vh;   
+
+  .info {
+    font-size: 16px;
+    color:rgb(245, 92, 92);
+    margin-top: 20px;
+    margin-left: 20px;
+  }          
 
   .see-title {
     font-size: 22px;

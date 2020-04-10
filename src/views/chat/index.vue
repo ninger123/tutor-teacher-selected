@@ -1,32 +1,30 @@
 <template>
   <div class="chat-container">
-    <div class="see-title"> > 聊天室/Chat Room</div>
+    <div class="see-title"> > 聊天室/Chat Room <span class="unreadinfo" v-if="havaUnread">(共有<el-badge :value="this.allUnread" :max="99" class="mesBadge" :hidden="this.allUnread === 0"></el-badge>条未读消息)</span></div>
     <div class="chat-room-container">
       <div class="chat-aside-container">
         <div class="aside-header">
           <span>联系人列表</span>
           </div>
         <ul class="chat-conversation-ul">
-          <li class="chat-conversation-li" v-for="(v, i) in contactsList" :key="v.conversationId" @click="getInRoom(v)">
-            <!--
-                        <el-badge :value="v.unRead" :max="99" class="mesBadge" :hidden="v.unRead === 0">
-                            <a class="vchat-photo">
-                                <img :src="v.url" alt="">
-                            </a>
-                        </el-badge> -->
+          <li class="chat-conversation-li" v-for="(v,i) in contactsList" :key="v.conversationId" ref="list_li" @click="getInRoom(v)">
+                        <div class="li-inside-container">
                           <a class="vchat-photo">
-                                <img :src="v.url" alt="">
+                              <img :src="v.url" alt="">
                           </a>
-                        <div class="chat-conversation-li-center">
-                            <template>
-                                <span class="vchat-line1">{{v.userName}}</span>
-                                <p class="vchat-line1">{{v.message}}</p>
-                            </template>
+                          <el-badge :value="v.unReadNumber" :max="99" class="mesBadge" :hidden="v.unReadNumber === 0">
+                          </el-badge>
+                          <div class="chat-conversation-li-center">
+                              <template>
+                                  <span class="vchat-line1">{{v.userName}}</span>
+                                  <p class="vchat-line1">{{v.message}}</p>
+                              </template>
+                          </div>
+                          <div class="chat-conversation-li-right">
+                              <span>{{v.date}}</span>
+                          </div>
                         </div>
-                        <div class="chat-conversation-li-right">
-                            <span>{{v.date}}</span>
-                        </div>
-                    </li>
+          </li>
         </ul>
       </div>
       <div class="chat-body-container" v-if="clicked">
@@ -49,7 +47,7 @@
                             <p class="mes">{{v.message}}</p>
                       </div>
                       <p class="avatar mines" v-if="v.type === 'mine'">
-                        <img :src="avatar" alt="">
+                        <img :src="myimage" alt="">
                       </p>
                     </div>
                   </li>
@@ -83,10 +81,9 @@
 </template>
 
 <script>
-import chatItem from './components/chat-item.vue';
 import { getUid } from '@/utils/auth'
 import { formatTime,formatDay } from '@/utils/format-date'
-import { getConversationList,getHistoryConversation } from '@/api/conversation'
+import { getConversationList,getHistoryConversation,getUnreadMessage,hasConversation } from '@/api/conversation'
 import { mapGetters } from 'vuex'
 import vuescroll from 'vuescroll';
 
@@ -101,8 +98,10 @@ export default {
           rail: {},
           bar: {}
       },
+      isActive:false,
       uid: getUid(),
       contactsList:[],
+      myimage:'',
       currRoom:undefined,
       currSation: [], //当前会话 
       message:'',
@@ -112,36 +111,90 @@ export default {
       oppsiteId:'',
       type:'',
       websock:null,
+      allUnread:'',
+      havaUnread:false
     }
   },
-   computed: {
+  computed: {
     ...mapGetters([
       'myname',
-      'avatar'
     ])
   },
+  watch:{
+    websock(val) {
+      //console.log(val)
+    }
+  },
   components: {
-    chatItem, 
     vuescroll
   },
   created() {
-    getConversationList({uid:this.uid}).then(response => {
-      var date = new Date()
-      var nowday = date.getDate()
-      response.data.forEach(element => {
-        var messagedate = new Date(element.date)
-        var messageday = messagedate.getDate()
-        var difference = nowday-messageday
-        if(difference === 0) {
-          element.date = this.formatTime(element.date)
-        } else if(difference === 1) {
-          element.date = '昨天'
+    if(!this.myname) {
+      this.$message({
+        message: '请先去填写个人信息哦～',
+        type: 'error'
+      })
+    }
+    if(!this.$store.getters.simage) {
+      this.myimage = this.$store.getters.avatar
+    } else {
+        if(this.$store.getters.roles[0] === "student") {
+        this.myimage = this.$store.getters.simage
         } else {
-          element.date = this.formatDay(element.date)
+        this.myimage = this.$store.getters.avatar
         }
-      }); 
-      this.contactsList = response.data
+    }
+      if(this.$route.params.uid) {
+        const contactId = this.$route.params.uid
+        const username = this.$route.params.name
+        const url = this.$route.params.url
+        let conversationId
+        if(contactId > this.uid) {
+          conversationId = this.uid + "_" + contactId
+        } else {
+          conversationId = contactId + "_" + this.uid
+        }
+        hasConversation({conversationId:conversationId}).then(response => {
+          if(response.data==="Yes")　{
+            this.getConversationList().then(response => {
+              response.forEach(element => {
+                if(element.conversationId === conversationId) {
+                  this.getInRoom(element)
+              }
+              })
+            })
+          } else {
+            this.getConversationList().then(response => {
+              const conversation = {
+                conversationId:conversationId,
+                userName:username,
+                url:url,
+                date:this.formatTime(new Date().getTime()),
+                message:'',
+                unReadNumber:0
+              }
+              this.contactsList.unshift(conversation)
+              this.getInRoom(conversation)
+            })
+          }
+        })
+      }
+
+
+    this.getConversationList()
+
+    getUnreadMessage({uid:this.uid}).then(response => {
+      if(response.data !== 0) {
+        this.havaUnread = true
+        this.allUnread = response.data
+      } else {
+        this.havaUnread = false
+      }
     })
+
+     if(this.websock) {
+        this.websocketclose()
+    }
   },
   methods: {
     formatTime,
@@ -149,6 +202,22 @@ export default {
     getInRoom(v) {
       if(this.websock) {
         this.websocketclose()
+      }
+      this.contactsList.forEach((item,i) => {
+        if(this.$refs.list_li[i].style.background = "rgba(155, 151, 151, 0.2)") {
+          this.$refs.list_li[i].style.background = "white"
+        }
+        if(item.conversationId === v.conversationId ) {
+          this.$refs.list_li[i].style.background = "rgba(155, 151, 151, 0.2)"
+        }
+      })
+
+      if(v.unReadNumber !== 0) {
+        this.allUnread = this.allUnread - v.unReadNumber
+        if(this.allUnread === 0) {
+          this.havaUnread = false
+        }
+        v.unReadNumber = 0
       }
       this.clicked = true
       this.currRoom = v.conversationId;
@@ -187,6 +256,31 @@ export default {
         this.initWebSocket()
       })
     },
+    getConversationList() {
+      return new Promise((resolve,reject) => {
+        getConversationList({uid:this.uid}).then(response => {
+          let date = new Date()
+          let nowday = date.getDate()
+          response.data.forEach(element => {
+            let messagedate = new Date(element.date)
+            let messageday = messagedate.getDate()
+            let difference = nowday-messageday
+            if(difference === 0) {
+              element.date = this.formatTime(element.date)
+            } else if(difference === 1) {
+              element.date = '昨天'
+            } else {
+              element.date = this.formatDay(element.date)
+            }
+          }); 
+          this.contactsList = response.data
+          resolve(this.contactsList)
+        }).catch(err => {
+          console.log(err)
+          reject(false)
+        })
+      })
+    },
     initWebSocket(){ //初始化weosocket
       const wsuri = "ws://295uq99495.wicp.vip:80/websocket/"+this.uid;
       this.websock = new WebSocket(wsuri);
@@ -210,10 +304,8 @@ export default {
       }
 
       this.contactsList.forEach(item=> {
-        console.log('item.conversationId'+ item.conversationId)
-        console.log('this.currRoom'+this.currRoom)
         if( item.conversationId=== this.currRoom ) {
-          if (e.fromName === this.currname) {
+          if (e.fromName === this.userName) {
             item.message = data.message
             item.date = this.formatTime(new Date().getTime())
           }
@@ -221,25 +313,33 @@ export default {
       })
       this.$nextTick(() => {
         this.$refs["vs"].scrollTo(
-              {
-                  y: "100%"
-              },
-              0
-            );
+          {
+              y: "100%"
+          },
+          0
+        );
       })
     },
 
     //如果连接建立失败则重连
     websocketonerror(){
-        this.initWebSocket();
     },
 
     //关闭链接
-    websocketclose(e){
-        console.log('断开连接',e);
+    websocketclose(){
+        console.log('断开连接');
+        let par ={
+          fromId:this.uid,
+          toId:this.oppsiteId,
+          message:"let_us_close_websocket_connect"
+        }
+        this.websock.send(JSON.stringify(par))
     },
+    
+    //发送消息
     sendMessage() {
-      if(this.message.trim() === '') {
+      if(this.myname) {
+        if(this.message.trim() === '') {
         return
       }
       let par ={fromId:this.uid,toId:this.oppsiteId,message:this.message}
@@ -261,21 +361,30 @@ export default {
         );
         this.clear()
       })
+      } else {
+        this.$message({
+          message: '请先去填写个人信息哦～',
+          type: 'error'
+        })
+      }
     },
      // 清空input框里输入的文字
     clear() {
       this.message = '';
     }
-  }
+  },
+  destroyed() {
+      if(this.websock) {
+        this.websocketclose()
+      }
+  },
+  // beforeRouteLeave(to,from,next) {
+  //   if(this.websock) {
+  //       this.websocketclose()
+  //   }
+  // }
 }
 </script>
-
-<style lang=scss>
-
-.el-textarea__inner {
-    border: 0 none;
-}
-</style>
 
 <style lang="scss" scoped>
 
@@ -286,13 +395,18 @@ export default {
     font-size: 22px;
     color:rgb(48,65,86);
     font-weight: bold;
+
+    .unreadinfo{
+
+      font-size: 14px;
+    }
   }
 
   .chat-room-container{
     width: 950px;
     height: 800px;
     margin: 0 auto;
-    border: 1px solid yellowgreen;
+    border: 1px solid rgba(48,65,86,0.7);
     display: flex;
 
     .chat-aside-container {
@@ -305,12 +419,13 @@ export default {
         font-size: 18px;
         font-weight: bold;
         height: 40px;
-        background: #42b983;
+        background: rgba(48,65,86,0.7);
 
         span{
           display: inline-block;
           margin-top:10px;
           margin-left:10px;
+          font-size: 20px;
         }
       }
 
@@ -323,21 +438,6 @@ export default {
                 overflow-y: auto;
                 padding-inline-start: 0;
                 margin-block-start:0;
-      }
-      .chat-conversation-li{
-                padding: 10px;
-                box-sizing: border-box;
-                display: flex;
-                overflow: hidden;
-                text-align: left;
-                position: relative;
-                border-bottom: 1px solid gray;
-                a img{
-                    width:42px;
-                    min-width: 42px;
-                    height: 42px;
-                    margin-right: 10px;
-                }
       }
       .chat-conversation-li-center{
                 width: 170px;
@@ -364,7 +464,22 @@ export default {
                   margin-bottom: 5px;
                 }
       }
-      .chat-conversation-li:hover {
+      .li-inside-container {
+        padding: 10px;
+        box-sizing: border-box;
+        display: flex;
+        overflow: hidden;
+        text-align: left;
+        position: relative;
+        border-bottom: 1px solid gray;
+        a img{
+            width:42px;
+            min-width: 42px;
+            height: 42px;
+                margin-right: 10px;
+            }
+      }
+      .li-inside-container:hover {
         background-color: rgba(155, 151, 151, 0.1);
       }
     }
@@ -394,17 +509,14 @@ export default {
       width:650px;
       height: 800px;
 
-      .chat-room {
-        border-bottom: 1px solid grey;
-      }
-
       .chat-room-header{
         height: 40px;
-        background-color: aquamarine;
+        background-color: rgba(48,65,86,0.9);
         font-weight: bold;
-        font-size: 20px;
+        font-size: 21px;
         padding: 10px;
         text-align: center;
+        color:white;
       }
 
       .chat-romm-body{
@@ -497,22 +609,22 @@ export default {
         display: block;
         position:absolute;
         top:10px;
-    }
-    .other p.mes:before{
-        left:-11px;
-        border-bottom: 5px solid #9cbeca;
-        border-left: 10px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 0;
-        transform: rotate(45deg);
-    }
-    .mine p.mes:after{
-        right:-10px;
-        border-bottom: 5px solid #acd9f8;
-        border-left: 5px solid transparent;
-        border-right: 10px solid transparent;
-        transform: rotate(-45deg);
-    }
+      }
+      .other p.mes:before{
+          left:-11px;
+          border-bottom: 5px solid #9cbeca;
+          border-left: 10px solid transparent;
+          border-right: 5px solid transparent;
+          border-top: 0;
+          transform: rotate(45deg);
+      }
+      .mine p.mes:after{
+          right:-10px;
+          border-bottom: 5px solid #acd9f8;
+          border-left: 5px solid transparent;
+          border-right: 10px solid transparent;
+          transform: rotate(-45deg);
+      }
     }
   }     
 }

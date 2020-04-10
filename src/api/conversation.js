@@ -15,3 +15,19 @@ export function getHistoryConversation(data) {
         data
     })
 }
+
+export function getUnreadMessage(data) {
+    return request({
+        url:'conversation/unread',
+        method:'post',
+        data
+    })
+}
+
+export function hasConversation(data) {
+    return request({
+        url:'conversation/has_conversation',
+        method:'post',
+        data
+    })
+}

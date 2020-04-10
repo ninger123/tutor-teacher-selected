@@ -82,7 +82,14 @@ export default {
     getTeacherSimple,
     formatDate,
     toPreview() {
-      this.$router.push('/tdetail')
+      if(this.$store.getters.myname) {
+        this.$router.push('/profile')
+      } else {
+        this.$message({
+          message: '请先去填写个人信息哦～',
+          type: 'error'
+        })
+      }
     },
     toEdit() {
       this.$router.push('/tedit')

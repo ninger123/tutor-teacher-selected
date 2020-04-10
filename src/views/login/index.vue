@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="xylogo">
-      <img alt="xiyou logo" src="../../assets/logo/xiyoulogo.jpeg">
+      <img alt="xiyou logo" src="@/assets/logo/xiyoulogo.jpeg">
       <p class="xyname">西安邮电大学</p>
     </div>
     <div class="sxtitle">本科生与导师双选系统</div>
