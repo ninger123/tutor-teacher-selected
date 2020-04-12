@@ -115,7 +115,7 @@ export default {
     getStudentSimple,
     formatDate,
     toPreview() {
-      if(this.$store.getters.myname) {
+      if(this.name) {
         this.$router.push('/profile')
       } else {
         this.$message({

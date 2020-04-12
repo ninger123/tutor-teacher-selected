@@ -17,8 +17,6 @@ import './icons' // icon
 import './permission' // permission control 权限控制
 import './utils/error-log' // error log
 
-import * as filters from './filters' // global filters
-
 import htmlToPdf from './utils/html-to-pdf' // 导出PDF
 
 import vuescroll from 'vuescroll';
@@ -49,12 +47,6 @@ Vue.use(vuescroll, {
   ops: {}, // 在这里设置全局默认配置
   name: 'myScroll' // 在这里自定义组件名字，默认是vueScroll
 });
-  
-// register global utility filters
-Object.keys(filters).forEach(key => {
-  Vue.filter(key, filters[key])
-})
-
 Vue.config.productionTip = false
 
 new Vue({

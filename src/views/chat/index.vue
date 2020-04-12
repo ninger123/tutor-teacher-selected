@@ -121,7 +121,6 @@ export default {
   },
   watch:{
     websock(val) {
-      //console.log(val)
     }
   },
   components: {
@@ -208,15 +207,18 @@ export default {
         this.websocketclose()
       }
       this.contactsList.forEach((item,i) => {
-        console.log(this.contactsList)
-        if(this.$refs.list_li[i].style.background = "rgba(155, 151, 151, 0.2)") {
-          this.$refs.list_li[i].style.background = "white"
-        }
-        if(item.conversationId === v.conversationId ) {
-          console.log(i)
-          const ll = this.$refs.list_li.length
-          console.log(ll)
-          this.$refs.list_li[lengths-1].style.background = "rgba(155, 151, 151, 0.2)"
+
+        if(!this.$route.params.uid) {
+          // 保证了当有一个阴影背景的时候其它是白色背景
+          if(this.$refs.list_li[i].style.background = "rgba(155, 151, 151, 0.2)") {
+            this.$refs.list_li[i].style.background = "white"
+          }
+          // 保证当前进入的房间的背静色的阴影的
+          if(item.conversationId === v.conversationId ) {
+            this.$refs.list_li[i].style.background = "rgba(155, 151, 151, 0.2)"
+          }
+        } else {
+          // 怎么做？？？
         }
       })
 
@@ -250,6 +252,8 @@ export default {
                 }
               })
               this.currSation = response.data;
+            }　else {
+              this.currSation = []
             }
           }).then(() => {
             this.$refs["vs"].scrollTo(
@@ -300,7 +304,7 @@ export default {
 
     //链接建立好之后调用的方法
     websocketonopen(){
-    　console.log('链接开始')
+    　// console.log('链接开始')
     },
 
     //收到服务器返回回来的消息
@@ -335,7 +339,6 @@ export default {
 
     //关闭链接
     websocketclose(){
-        console.log('断开连接');
         let par ={
           fromId:this.uid,
           toId:this.oppsiteId,
@@ -464,7 +467,7 @@ export default {
       }
       .chat-conversation-li-right{
                 margin-left: 5px;
-                min-width: 36px;
+                min-width: 45px;
                 font-size: 12px;
                 text-align: right;
                 span {

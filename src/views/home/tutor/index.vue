@@ -81,8 +81,8 @@ export default {
     getTeacherSimple,
     formatDate,
     toPreview() {
-      if(this.$store.getters.myname) {
-        this.$router.push('/profile')
+      if(this.name) {
+        this.$router.push('/tdetail')
       } else {
         this.$message({
           message: '请先去填写个人信息哦～',
