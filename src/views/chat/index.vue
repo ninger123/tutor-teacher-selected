@@ -7,7 +7,7 @@
           <span>联系人列表</span>
           </div>
         <ul class="chat-conversation-ul">
-          <li class="chat-conversation-li" v-for="(v,i) in contactsList" :key="v.conversationId" ref="list_li" @click="getInRoom(v)">
+          <li class="chat-conversation-li" v-for="v in contactsList" :key="v.conversationId" ref="list_li" @click="getInRoom(v)">
                         <div class="li-inside-container">
                           <a class="vchat-photo">
                               <img :src="v.url" alt="">
@@ -93,8 +93,7 @@ export default {
     return {
       ops: {
           vuescroll: {},
-          scrollPanel: {
-          },
+          scrollPanel: {},
           rail: {},
           bar: {}
       },
@@ -144,6 +143,7 @@ export default {
         this.myimage = this.$store.getters.avatar
         }
     }
+    // 如果是从别的页面跳转过来的
       if(this.$route.params.uid) {
         const contactId = this.$route.params.uid
         const username = this.$route.params.name
@@ -167,6 +167,8 @@ export default {
             this.getConversationList().then(response => {
               const conversation = {
                 conversationId:conversationId,
+                fromId:null,
+                toId:null,
                 userName:username,
                 url:url,
                 date:this.formatTime(new Date().getTime()),
@@ -174,7 +176,9 @@ export default {
                 unReadNumber:0
               }
               this.contactsList.unshift(conversation)
-              this.getInRoom(conversation)
+              this.$nextTick(() => {
+                this.getInRoom(conversation)
+              })
             })
           }
         })
@@ -204,11 +208,15 @@ export default {
         this.websocketclose()
       }
       this.contactsList.forEach((item,i) => {
+        console.log(this.contactsList)
         if(this.$refs.list_li[i].style.background = "rgba(155, 151, 151, 0.2)") {
           this.$refs.list_li[i].style.background = "white"
         }
         if(item.conversationId === v.conversationId ) {
-          this.$refs.list_li[i].style.background = "rgba(155, 151, 151, 0.2)"
+          console.log(i)
+          const ll = this.$refs.list_li.length
+          console.log(ll)
+          this.$refs.list_li[lengths-1].style.background = "rgba(155, 151, 151, 0.2)"
         }
       })
 

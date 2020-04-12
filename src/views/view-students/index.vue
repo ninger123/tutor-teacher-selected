@@ -45,7 +45,7 @@
             <el-button @click="seeStudentResume(scope.row)" type="text">查看简历</el-button>
             <el-button @click="passTheApplication(scope.row)" type="text">接受申请</el-button>
             <el-button @click="refuseTheApplication(scope.row)" type="text">拒绝申请</el-button>
-            <el-button @click="seeDetail(scope.row)" type="text">联系学生</el-button>
+            <el-button @click="contactStudent(scope.row)" type="text">联系学生</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -82,6 +82,16 @@ export default {
           this.$router.go(0);
         }
       })
+    },
+    contactStudent(row) {
+      if(this.$store.getters.myname) {
+        this.$router.push({ name:'Chat', params: {uid:row.student_uid,name:row.student_name,url:row.student_image}})
+      } else {
+        this.$message({
+          message: '请先去填写个人信息哦～',
+          type: 'error'
+        })
+      }
     },
     refuseTheApplication(row) {
       refuseTheApplication({sid:row.sid}).then(response => {

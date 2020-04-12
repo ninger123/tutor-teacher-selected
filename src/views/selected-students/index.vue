@@ -38,7 +38,7 @@
           width="180">
           <template slot-scope="scope">
             <el-button @click="seeStudentDetail(scope.row)" type="text">查看简历</el-button>
-            <el-button @click="seeStudentDetail(scope.row)" type="text">联系学生</el-button>
+            <el-button @click="contactStudent(scope.row)" type="text">联系学生</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,7 +71,17 @@ export default {
     seeStudentDetail(row) {
       this.$router.push({path:'/profile',query:{uid:row.student_uid}})
     },
-    formatDate
+    formatDate,
+    contactStudent(row) {
+      if(this.$store.getters.myname) {
+        this.$router.push({ name:'Chat', params: {uid:row.student_uid,name:row.student_name,url:row.student_image}})
+      } else {
+        this.$message({
+          message: '请先去填写个人信息哦～',
+          type: 'error'
+        })
+      }
+    } 
   }
 }
 </script>
