@@ -218,8 +218,21 @@ export default {
             this.$refs.list_li[i].style.background = "rgba(155, 151, 151, 0.2)"
           }
         } else {
+          // 当聊天室是从别的页面push跳过来的时候
           // 怎么做？？？
-        }
+          if(item.conversationId === v.conversationId) {
+            this.$refs.list_li.forEach(item => {
+                item.style.background = "white"
+              })
+            if(i === 0) {
+              const currentLength = this.$refs.list_li.length
+              this.$refs.list_li[currentLength-1].style.background = "rgba(155,151,151,0.2"
+            }
+             else {
+              this.$refs.list_li[i-1].style.background = "rgba(155, 151, 151, 0.2)"
+            }
+          }
+        } 
       })
 
       if(v.unReadNumber !== 0) {
